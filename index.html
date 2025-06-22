@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Key Chatter Monitor</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+            font-weight: 300;
+        }
+
+        .controls {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        label {
+            font-weight: 500;
+            color: #555;
+        }
+
+        input[type="number"] {
+            padding: 8px 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            width: 80px;
+            transition: border-color 0.3s ease;
+        }
+
+        input[type="number"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        button {
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .status {
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            font-weight: 500;
+            font-size: 1.1rem;
+        }
+
+        .status.monitoring {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+        }
+
+        .status.stopped {
+            background: linear-gradient(135deg, #f44336, #da190b);
+            color: white;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .panel {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border: 1px solid #eee;
+        }
+
+        .panel h3 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.3rem;
+            font-weight: 500;
+        }
+
+        .live-display {
+            font-family: 'Courier New', monospace;
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+            min-height: 100px;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .key-press {
+            margin-bottom: 5px;
+            padding: 5px;
+            border-radius: 4px;
+        }
+
+        .key-press.normal {
+            background: #e8f5e8;
+            color: #2e7d32;
+        }
+
+        .key-press.chatter {
+            background: #ffebee;
+            color: #c62828;
+            font-weight: bold;
+        }
+
+        .key-press.potential {
+            background: #fff3e0;
+            color: #ef6c00;
+        }
+
+        .fast-interval {
+            color: #d32f2f;
+            font-weight: bold;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 15px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            border: 1px solid #dee2e6;
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .chatter-list {
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            background: #f8f9fa;
+        }
+
+        .chatter-item {
+            padding: 10px 15px;
+            border-bottom: 1px solid #e9ecef;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+        }
+
+        .chatter-item:last-child {
+            border-bottom: none;
+        }
+
+        .chatter-item.severe {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        .chatter-item.moderate {
+            background: #fff3e0;
+            color: #ef6c00;
+        }
+
+        .instructions {
+            background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-left: 4px solid #2196f3;
+        }
+
+        .instructions h4 {
+            color: #1976d2;
+            margin-bottom: 10px;
+        }
+
+        .instructions p {
+            color: #555;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎹 Key Chatter Monitor</h1>
+        
+        <div class="instructions">
+            <h4>How to use:</h4>
+            <p>Click "Start Monitoring" and begin typing. The monitor will detect when the same key is pressed multiple times within a short timeframe, indicating potential key chattering or bouncing issues.</p>
+        </div>
+
+        <div class="controls">
+            <div class="control-group">
+                <label for="threshold">Chatter Threshold (ms):</label>
+                <input type="number" id="threshold" value="50" min="10" max="500">
+            </div>
+            <div class="control-group">
+                <label for="sensitivity">Min Repeats:</label>
+                <input type="number" id="sensitivity" value="3" min="2" max="10">
+            </div>
+            <button id="toggleBtn">Start Monitoring</button>
+            <button id="clearBtn">Clear Data</button>
+        </div>
+
+        <div class="status stopped" id="status">
+            Ready to monitor - Click "Start Monitoring" to begin
+        </div>
+
+        <div class="grid">
+            <div class="panel">
+                <h3>📊 Live Statistics</h3>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value" id="totalPresses">0</div>
+                        <div class="stat-label">Total Presses</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="chatterEvents">0</div>
+                        <div class="stat-label">Chatter Events</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="uniqueKeys">0</div>
+                        <div class="stat-label">Unique Keys</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="chatterRate">0%</div>
+                        <div class="stat-label">Chatter Rate</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel">
+                <h3>🔥 Recent Key Presses</h3>
+                <div class="live-display" id="liveDisplay">
+                    Waiting for key presses...
+                </div>
+            </div>
+        </div>
+
+        <div class="panel">
+            <h3>⚠️ Detected Chatter Events</h3>
+            <div class="chatter-list" id="chatterList">
+                <div style="padding: 20px; text-align: center; color: #666;">
+                    No chatter events detected yet
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class KeyChatterMonitor {
+            constructor() {
+                this.isMonitoring = false;
+                this.keyTimestamps = new Map();
+                this.chatterEvents = [];
+                this.totalPresses = 0;
+                this.recentPresses = [];
+                this.maxRecentPresses = 10;
+                
+                this.initializeElements();
+                this.attachEventListeners();
+            }
+
+            initializeElements() {
+                this.toggleBtn = document.getElementById('toggleBtn');
+                this.clearBtn = document.getElementById('clearBtn');
+                this.status = document.getElementById('status');
+                this.thresholdInput = document.getElementById('threshold');
+                this.sensitivityInput = document.getElementById('sensitivity');
+                this.liveDisplay = document.getElementById('liveDisplay');
+                this.chatterList = document.getElementById('chatterList');
+                
+                // Stats elements
+                this.totalPressesEl = document.getElementById('totalPresses');
+                this.chatterEventsEl = document.getElementById('chatterEvents');
+                this.uniqueKeysEl = document.getElementById('uniqueKeys');
+                this.chatterRateEl = document.getElementById('chatterRate');
+            }
+
+            attachEventListeners() {
+                this.toggleBtn.addEventListener('click', () => this.toggleMonitoring());
+                this.clearBtn.addEventListener('click', () => this.clearData());
+                
+                document.addEventListener('keydown', (e) => this.handleKeyPress(e));
+                document.addEventListener('keyup', (e) => this.handleKeyRelease(e));
+            }
+
+            toggleMonitoring() {
+                this.isMonitoring = !this.isMonitoring;
+                
+                if (this.isMonitoring) {
+                    this.startMonitoring();
+                } else {
+                    this.stopMonitoring();
+                }
+            }
+
+            startMonitoring() {
+                this.toggleBtn.textContent = 'Stop Monitoring';
+                this.status.textContent = 'Monitoring active - Start typing to detect key chatter';
+                this.status.className = 'status monitoring';
+                this.liveDisplay.innerHTML = 'Monitoring started - Press any keys...';
+            }
+
+            stopMonitoring() {
+                this.toggleBtn.textContent = 'Start Monitoring';
+                this.status.textContent = 'Monitoring stopped';
+                this.status.className = 'status stopped';
+            }
+
+            handleKeyPress(event) {
+                if (!this.isMonitoring) return;
+                
+                const key = event.key;
+                const timestamp = Date.now();
+                const threshold = parseInt(this.thresholdInput.value);
+                const minRepeats = parseInt(this.sensitivityInput.value);
+
+                // Initialize key tracking
+                if (!this.keyTimestamps.has(key)) {
+                    this.keyTimestamps.set(key, []);
+                }
+
+                const keyTimes = this.keyTimestamps.get(key);
+                keyTimes.push(timestamp);
+
+                // Keep only recent timestamps within threshold window
+                const cutoff = timestamp - (threshold * 3);
+                const recentTimes = keyTimes.filter(t => t > cutoff);
+                this.keyTimestamps.set(key, recentTimes);
+
+                this.totalPresses++;
+                this.updateLiveDisplay(key, timestamp, false);
+
+                // Check for chatter
+                this.checkForChatter(key, recentTimes, threshold, minRepeats);
+                this.updateStatistics();
+            }
+
+            handleKeyRelease(event) {
+                // Could be used for more sophisticated timing analysis if needed
+            }
+
+            checkForChatter(key, timestamps, threshold, minRepeats) {
+                if (timestamps.length < minRepeats) return;
+
+                // Check if we have rapid consecutive presses
+                const rapidPresses = [];
+                for (let i = 1; i < timestamps.length; i++) {
+                    const interval = timestamps[i] - timestamps[i-1];
+                    if (interval <= threshold) {
+                        if (rapidPresses.length === 0) {
+                            rapidPresses.push(timestamps[i-1]);
+                        }
+                        rapidPresses.push(timestamps[i]);
+                    }
+                }
+
+                if (rapidPresses.length >= minRepeats) {
+                    const chatterEvent = {
+                        key: key,
+                        timestamps: [...rapidPresses],
+                        intervals: rapidPresses.slice(1).map((t, i) => t - rapidPresses[i]),
+                        avgInterval: rapidPresses.slice(1).reduce((sum, t, i) => sum + (t - rapidPresses[i]), 0) / (rapidPresses.length - 1),
+                        severity: this.calculateSeverity(rapidPresses, threshold),
+                        detectedAt: Date.now()
+                    };
+
+                    this.chatterEvents.push(chatterEvent);
+                    this.displayChatterEvent(chatterEvent);
+                    this.updateLiveDisplay(key, Date.now(), true);
+                }
+            }
+
+            calculateSeverity(timestamps, threshold) {
+                const avgInterval = timestamps.slice(1).reduce((sum, t, i) => sum + (t - timestamps[i]), 0) / (timestamps.length - 1);
+                const severity = Math.max(0, 1 - (avgInterval / threshold));
+                
+                if (severity > 0.7) return 'severe';
+                if (severity > 0.4) return 'moderate';
+                return 'mild';
+            }
+
+            updateLiveDisplay(key, timestamp, isChatter) {
+                const time = new Date(timestamp).toLocaleTimeString();
+                const displayKey = key === ' ' ? 'SPACE' : key.toUpperCase();
+                
+                // Calculate interval from previous press of the same key
+                let interval = null;
+                const keyTimes = this.keyTimestamps.get(key) || [];
+                if (keyTimes.length >= 2) {
+                    // Get the two most recent timestamps for this key
+                    const sortedTimes = [...keyTimes].sort((a, b) => b - a);
+                    interval = sortedTimes[0] - sortedTimes[1];
+                }
+                
+                const pressInfo = {
+                    key: displayKey,
+                    time: time,
+                    isChatter: isChatter,
+                    interval: interval
+                };
+
+                this.recentPresses.unshift(pressInfo);
+                if (this.recentPresses.length > this.maxRecentPresses) {
+                    this.recentPresses.pop();
+                }
+
+                this.renderRecentPresses();
+            }
+
+            renderRecentPresses() {
+                if (this.recentPresses.length === 0) {
+                    this.liveDisplay.innerHTML = 'Waiting for key presses...';
+                    return;
+                }
+
+                const html = this.recentPresses.map(press => {
+                    const className = press.isChatter ? 'chatter' : 'normal';
+                    const icon = press.isChatter ? '⚠️' : '✓';
+                    const intervalText = press.interval !== null ? ` (+${press.interval}ms)` : '';
+                    const intervalClass = press.interval !== null && press.interval < 100 ? 'fast-interval' : '';
+                    
+                    return `<div class="key-press ${className}">
+                        ${icon} ${press.time} - ${press.key}<span class="${intervalClass}">${intervalText}</span>
+                    </div>`;
+                }).join('');
+
+                this.liveDisplay.innerHTML = html;
+            }
+
+            displayChatterEvent(event) {
+                const time = new Date(event.detectedAt).toLocaleTimeString();
+                const displayKey = event.key === ' ' ? 'SPACE' : event.key.toUpperCase();
+                const avgInterval = Math.round(event.avgInterval);
+                
+                const chatterItem = document.createElement('div');
+                chatterItem.className = `chatter-item ${event.severity}`;
+                chatterItem.innerHTML = `
+                    <strong>${time}</strong> - Key "${displayKey}" 
+                    (${event.timestamps.length} rapid presses, avg ${avgInterval}ms interval)
+                    <br><small>Intervals: ${event.intervals.map(i => i + 'ms').join(', ')}</small>
+                `;
+
+                if (this.chatterList.children.length === 1 && this.chatterList.children[0].style.textAlign) {
+                    this.chatterList.innerHTML = '';
+                }
+
+                this.chatterList.insertBefore(chatterItem, this.chatterList.firstChild);
+            }
+
+            updateStatistics() {
+                this.totalPressesEl.textContent = this.totalPresses;
+                this.chatterEventsEl.textContent = this.chatterEvents.length;
+                this.uniqueKeysEl.textContent = this.keyTimestamps.size;
+                
+                const chatterRate = this.totalPresses > 0 ? 
+                    Math.round((this.chatterEvents.length / this.totalPresses) * 100) : 0;
+                this.chatterRateEl.textContent = chatterRate + '%';
+            }
+
+            clearData() {
+                this.keyTimestamps.clear();
+                this.chatterEvents = [];
+                this.totalPresses = 0;
+                this.recentPresses = [];
+                
+                this.liveDisplay.innerHTML = this.isMonitoring ? 
+                    'Monitoring active - Press any keys...' : 
+                    'Waiting for key presses...';
+                
+                this.chatterList.innerHTML = `
+                    <div style="padding: 20px; text-align: center; color: #666;">
+                        No chatter events detected yet
+                    </div>
+                `;
+                
+                this.updateStatistics();
+            }
+        }
+
+        // Initialize the monitor when the page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            new KeyChatterMonitor();
+        });
+    </script>
+</body>
+</html>
