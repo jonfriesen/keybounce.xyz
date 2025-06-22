@@ -548,8 +548,18 @@
             background: #C2185B;
             color: #fff;
             margin: 0 2px;
-            display: inline-block;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
             transition: all 0.1s ease;
+        }
+
+        .footer-icon {
+            width: 16px;
+            height: 16px;
+            border-radius: 2px;
+            background: #fff;
+            padding: 1px;
         }
 
         .footer-link:hover {
@@ -887,9 +897,18 @@
         <footer class="footer">
             <div class="footer-text">
                 This app was vibe coded on June 22, 2025 by 
-                <a href="https://github.com/kamaln7" target="_blank" class="footer-link">Kamal</a>, 
-                <a href="https://github.com/jonfriesen" target="_blank" class="footer-link">Jon</a>, and 
-                <a href="https://github.com/boldsoftware/sketch" target="_blank" class="footer-link">Sketch</a>!
+                <a href="https://github.com/kamaln7" target="_blank" class="footer-link">
+                    <img src="https://kamal.io/favicon-32x32.png" alt="Kamal" class="footer-icon">
+                    Kamal
+                </a>, 
+                <a href="https://github.com/jonfriesen" target="_blank" class="footer-link">
+                    <img src="https://jonfriesen.ca/favicon.ico" alt="Jon" class="footer-icon">
+                    Jon
+                </a>, and 
+                <a href="https://github.com/boldsoftware/sketch" target="_blank" class="footer-link">
+                    <img src="https://sketch.dev/favicon.ico" alt="Sketch" class="footer-icon">
+                    Sketch
+                </a>!
             </div>
         </footer>
     </div>
