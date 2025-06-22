@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Key Chatter Monitor</title>
+    <link rel="icon" type="image/x-icon" href="https://jonfriesen.ca/favicon.ico">
+    <title>Key Bounce Monitor</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap');
         
@@ -476,7 +477,7 @@
     <div class="decorative-shape square-1"></div>
     
     <div class="container">
-        <h1>KEY CHATTER MONITOR</h1>
+        <h1>KEY BOUNCE MONITOR</h1>
         <p class="subtitle">Detect keyboard bounce and chatter issues with brutal precision</p>
         
         <div class="instructions">
@@ -491,7 +492,7 @@
             </div>
             <div class="control-group">
                 <label for="sensitivity">Min Repeats:</label>
-                <input type="number" id="sensitivity" value="3" min="2" max="10">
+                <input type="number" id="sensitivity" value="1" min="1" max="10">
             </div>
             <button id="toggleBtn">Start Monitoring</button>
             <button id="clearBtn">Clear Data</button>
@@ -789,6 +790,7 @@
         // Initialize the monitor when the page loads
         document.addEventListener('DOMContentLoaded', () => {
             new KeyChatterMonitor();
+            startMonitoring();
         });
     </script>
 </body>
