@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,7 +8,7 @@
     <title>Key Bounce Monitor</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap');
-        
+
         * {
             margin: 0;
             padding: 0;
@@ -250,9 +251,11 @@
             .grid {
                 grid-template-columns: 1fr;
             }
+
             h1 {
                 font-size: 2.5rem;
             }
+
             .controls {
                 flex-direction: column;
                 gap: 15px;
@@ -353,7 +356,7 @@
             font-size: 0.85em;
             color: #000;
             text-shadow: 0 1px 0 rgba(255, 255, 255, 0.8);
-            box-shadow: 
+            box-shadow:
                 0 2px 0 #000,
                 0 3px 2px rgba(0, 0, 0, 0.2),
                 inset 0 1px 0 rgba(255, 255, 255, 0.9);
@@ -364,7 +367,7 @@
 
         .keycap:hover {
             transform: translateY(1px);
-            box-shadow: 
+            box-shadow:
                 0 1px 0 #000,
                 0 2px 1px rgba(0, 0, 0, 0.2),
                 inset 0 1px 0 rgba(255, 255, 255, 0.9);
@@ -572,17 +575,19 @@
         }
     </style>
 </head>
+
 <body>
     <div class="decorative-shape circle-1"></div>
     <div class="decorative-shape square-1"></div>
-    
+
     <div class="container">
         <h1>KEY BOUNCE MONITOR</h1>
         <p class="subtitle">Detect keyboard bounce and chatter issues with brutal precision</p>
-        
+
         <div class="instructions">
             <h4>How to use:</h4>
-            <p>Click "Start Monitoring" and begin typing. The monitor will detect when the same key is pressed multiple times within a short timeframe, indicating potential key chattering or bouncing issues.</p>
+            <p>Click "Start Monitoring" and begin typing. The monitor will detect when the same key is pressed multiple
+                times within a short timeframe, indicating potential key chattering or bouncing issues.</p>
         </div>
 
         <div class="controls">
@@ -642,267 +647,267 @@
             </div>
         </div>
 
-    <script>
-        class KeyChatterMonitor {
-            constructor() {
-                this.isMonitoring = false;
-                this.keyTimestamps = new Map();
-                this.chatterEvents = [];
-                this.totalPresses = 0;
-                this.recentPresses = [];
-                this.maxRecentPresses = 10;
-                
-                this.initializeElements();
-                this.attachEventListeners();
-            }
+        <script>
+            class KeyChatterMonitor {
+                constructor() {
+                    this.isMonitoring = false;
+                    this.keyTimestamps = new Map();
+                    this.chatterEvents = [];
+                    this.totalPresses = 0;
+                    this.recentPresses = [];
+                    this.maxRecentPresses = 10;
 
-            initializeElements() {
-                this.toggleBtn = document.getElementById('toggleBtn');
-                this.clearBtn = document.getElementById('clearBtn');
-                this.status = document.getElementById('status');
-                this.thresholdInput = document.getElementById('threshold');
-                this.sensitivityInput = document.getElementById('sensitivity');
-                this.liveDisplay = document.getElementById('liveDisplay');
-                this.chatterList = document.getElementById('chatterList');
-                
-                // Stats elements
-                this.totalPressesEl = document.getElementById('totalPresses');
-                this.chatterEventsEl = document.getElementById('chatterEvents');
-                this.uniqueKeysEl = document.getElementById('uniqueKeys');
-                this.chatterRateEl = document.getElementById('chatterRate');
-            }
-
-            attachEventListeners() {
-                this.toggleBtn.addEventListener('click', () => this.toggleMonitoring());
-                this.clearBtn.addEventListener('click', () => this.clearData());
-                
-                document.addEventListener('keydown', (e) => this.handleKeyPress(e));
-                document.addEventListener('keyup', (e) => this.handleKeyRelease(e));
-            }
-
-            toggleMonitoring() {
-                this.isMonitoring = !this.isMonitoring;
-                
-                if (this.isMonitoring) {
-                    this.startMonitoring();
-                } else {
-                    this.stopMonitoring();
-                }
-            }
-
-            startMonitoring() {
-                this.toggleBtn.textContent = 'Stop Monitoring';
-                this.status.textContent = 'Monitoring active - Start typing to detect key chatter';
-                this.status.className = 'status monitoring';
-                this.liveDisplay.innerHTML = 'Monitoring started - Press any keys...';
-            }
-
-            stopMonitoring() {
-                this.toggleBtn.textContent = 'Start Monitoring';
-                this.status.textContent = 'Monitoring stopped';
-                this.status.className = 'status stopped';
-            }
-
-            handleKeyPress(event) {
-                if (!this.isMonitoring) return;
-                
-                const key = event.key;
-                const timestamp = Date.now();
-                const threshold = parseInt(this.thresholdInput.value);
-                const minRepeats = parseInt(this.sensitivityInput.value);
-
-                // Initialize key tracking
-                if (!this.keyTimestamps.has(key)) {
-                    this.keyTimestamps.set(key, []);
+                    this.initializeElements();
+                    this.attachEventListeners();
                 }
 
-                const keyTimes = this.keyTimestamps.get(key);
-                keyTimes.push(timestamp);
+                initializeElements() {
+                    this.toggleBtn = document.getElementById('toggleBtn');
+                    this.clearBtn = document.getElementById('clearBtn');
+                    this.status = document.getElementById('status');
+                    this.thresholdInput = document.getElementById('threshold');
+                    this.sensitivityInput = document.getElementById('sensitivity');
+                    this.liveDisplay = document.getElementById('liveDisplay');
+                    this.chatterList = document.getElementById('chatterList');
 
-                // Keep only recent timestamps within threshold window
-                const cutoff = timestamp - (threshold * 3);
-                const recentTimes = keyTimes.filter(t => t > cutoff);
-                this.keyTimestamps.set(key, recentTimes);
+                    // Stats elements
+                    this.totalPressesEl = document.getElementById('totalPresses');
+                    this.chatterEventsEl = document.getElementById('chatterEvents');
+                    this.uniqueKeysEl = document.getElementById('uniqueKeys');
+                    this.chatterRateEl = document.getElementById('chatterRate');
+                }
 
-                this.totalPresses++;
-                this.updateLiveDisplay(key, timestamp, false);
+                attachEventListeners() {
+                    this.toggleBtn.addEventListener('click', () => this.toggleMonitoring());
+                    this.clearBtn.addEventListener('click', () => this.clearData());
 
-                // Check for chatter
-                this.checkForChatter(key, recentTimes, threshold, minRepeats);
-                this.updateStatistics();
-            }
+                    document.addEventListener('keydown', (e) => this.handleKeyPress(e));
+                    document.addEventListener('keyup', (e) => this.handleKeyRelease(e));
+                }
 
-            handleKeyRelease(event) {
-                // Could be used for more sophisticated timing analysis if needed
-            }
+                toggleMonitoring() {
+                    this.isMonitoring = !this.isMonitoring;
 
-            checkForChatter(key, timestamps, threshold, minRepeats) {
-                if (timestamps.length < minRepeats) return;
-
-                // Check if we have rapid consecutive presses
-                const rapidPresses = [];
-                for (let i = 1; i < timestamps.length; i++) {
-                    const interval = timestamps[i] - timestamps[i-1];
-                    if (interval <= threshold) {
-                        if (rapidPresses.length === 0) {
-                            rapidPresses.push(timestamps[i-1]);
-                        }
-                        rapidPresses.push(timestamps[i]);
+                    if (this.isMonitoring) {
+                        this.startMonitoring();
+                    } else {
+                        this.stopMonitoring();
                     }
                 }
 
-                if (rapidPresses.length >= minRepeats) {
-                    const chatterEvent = {
-                        key: key,
-                        timestamps: [...rapidPresses],
-                        intervals: rapidPresses.slice(1).map((t, i) => t - rapidPresses[i]),
-                        avgInterval: rapidPresses.slice(1).reduce((sum, t, i) => sum + (t - rapidPresses[i]), 0) / (rapidPresses.length - 1),
-                        severity: this.calculateSeverity(rapidPresses, threshold),
-                        detectedAt: Date.now()
+                startMonitoring() {
+                    this.toggleBtn.textContent = 'Stop Monitoring';
+                    this.status.textContent = 'Monitoring active - Start typing to detect key chatter';
+                    this.status.className = 'status monitoring';
+                    this.liveDisplay.innerHTML = 'Monitoring started - Press any keys...';
+                }
+
+                stopMonitoring() {
+                    this.toggleBtn.textContent = 'Start Monitoring';
+                    this.status.textContent = 'Monitoring stopped';
+                    this.status.className = 'status stopped';
+                }
+
+                handleKeyPress(event) {
+                    if (!this.isMonitoring) return;
+
+                    const key = event.key;
+                    const timestamp = Date.now();
+                    const threshold = parseInt(this.thresholdInput.value);
+                    const minRepeats = parseInt(this.sensitivityInput.value);
+
+                    // Initialize key tracking
+                    if (!this.keyTimestamps.has(key)) {
+                        this.keyTimestamps.set(key, []);
+                    }
+
+                    const keyTimes = this.keyTimestamps.get(key);
+                    keyTimes.push(timestamp);
+
+                    // Keep only recent timestamps within threshold window
+                    const cutoff = timestamp - (threshold * 3);
+                    const recentTimes = keyTimes.filter(t => t > cutoff);
+                    this.keyTimestamps.set(key, recentTimes);
+
+                    this.totalPresses++;
+                    this.updateLiveDisplay(key, timestamp, false);
+
+                    // Check for chatter
+                    this.checkForChatter(key, recentTimes, threshold, minRepeats);
+                    this.updateStatistics();
+                }
+
+                handleKeyRelease(event) {
+                    // Could be used for more sophisticated timing analysis if needed
+                }
+
+                checkForChatter(key, timestamps, threshold, minRepeats) {
+                    if (timestamps.length < minRepeats) return;
+
+                    // Check if we have rapid consecutive presses
+                    const rapidPresses = [];
+                    for (let i = 1; i < timestamps.length; i++) {
+                        const interval = timestamps[i] - timestamps[i - 1];
+                        if (interval <= threshold) {
+                            if (rapidPresses.length === 0) {
+                                rapidPresses.push(timestamps[i - 1]);
+                            }
+                            rapidPresses.push(timestamps[i]);
+                        }
+                    }
+
+                    if (rapidPresses.length >= minRepeats) {
+                        const chatterEvent = {
+                            key: key,
+                            timestamps: [...rapidPresses],
+                            intervals: rapidPresses.slice(1).map((t, i) => t - rapidPresses[i]),
+                            avgInterval: rapidPresses.slice(1).reduce((sum, t, i) => sum + (t - rapidPresses[i]), 0) / (rapidPresses.length - 1),
+                            severity: this.calculateSeverity(rapidPresses, threshold),
+                            detectedAt: Date.now()
+                        };
+
+                        this.chatterEvents.push(chatterEvent);
+                        this.displayChatterEvent(chatterEvent);
+                        this.updateLiveDisplay(key, Date.now(), true);
+                    }
+                }
+
+                calculateSeverity(timestamps, threshold) {
+                    const avgInterval = timestamps.slice(1).reduce((sum, t, i) => sum + (t - timestamps[i]), 0) / (timestamps.length - 1);
+                    const severity = Math.max(0, 1 - (avgInterval / threshold));
+
+                    if (severity > 0.7) return 'severe';
+                    if (severity > 0.4) return 'moderate';
+                    return 'mild';
+                }
+
+                updateLiveDisplay(key, timestamp, isChatter) {
+                    const time = new Date(timestamp).toLocaleTimeString('en-US', {
+                        hour12: false,
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        second: '2-digit',
+                        fractionalSecondDigits: 3
+                    });
+                    const displayKey = key === ' ' ? 'SPACE' : key.toUpperCase();
+
+                    // Calculate interval from previous press of the same key
+                    let interval = null;
+                    const keyTimes = this.keyTimestamps.get(key) || [];
+                    if (keyTimes.length >= 2) {
+                        // Get the two most recent timestamps for this key
+                        const sortedTimes = [...keyTimes].sort((a, b) => b - a);
+                        interval = sortedTimes[0] - sortedTimes[1];
+                    }
+
+                    const pressInfo = {
+                        key: displayKey,
+                        time: time,
+                        isChatter: isChatter,
+                        interval: interval
                     };
 
-                    this.chatterEvents.push(chatterEvent);
-                    this.displayChatterEvent(chatterEvent);
-                    this.updateLiveDisplay(key, Date.now(), true);
-                }
-            }
+                    this.recentPresses.unshift(pressInfo);
+                    if (this.recentPresses.length > this.maxRecentPresses) {
+                        this.recentPresses.pop();
+                    }
 
-            calculateSeverity(timestamps, threshold) {
-                const avgInterval = timestamps.slice(1).reduce((sum, t, i) => sum + (t - timestamps[i]), 0) / (timestamps.length - 1);
-                const severity = Math.max(0, 1 - (avgInterval / threshold));
-                
-                if (severity > 0.7) return 'severe';
-                if (severity > 0.4) return 'moderate';
-                return 'mild';
-            }
-
-            updateLiveDisplay(key, timestamp, isChatter) {
-                const time = new Date(timestamp).toLocaleTimeString('en-US', {
-                    hour12: false,
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    second: '2-digit',
-                    fractionalSecondDigits: 3
-                });
-                const displayKey = key === ' ' ? 'SPACE' : key.toUpperCase();
-                
-                // Calculate interval from previous press of the same key
-                let interval = null;
-                const keyTimes = this.keyTimestamps.get(key) || [];
-                if (keyTimes.length >= 2) {
-                    // Get the two most recent timestamps for this key
-                    const sortedTimes = [...keyTimes].sort((a, b) => b - a);
-                    interval = sortedTimes[0] - sortedTimes[1];
-                }
-                
-                const pressInfo = {
-                    key: displayKey,
-                    time: time,
-                    isChatter: isChatter,
-                    interval: interval
-                };
-
-                this.recentPresses.unshift(pressInfo);
-                if (this.recentPresses.length > this.maxRecentPresses) {
-                    this.recentPresses.pop();
+                    this.renderRecentPresses();
                 }
 
-                this.renderRecentPresses();
-            }
+                renderRecentPresses() {
+                    if (this.recentPresses.length === 0) {
+                        this.liveDisplay.innerHTML = 'Waiting for key presses...';
+                        return;
+                    }
 
-            renderRecentPresses() {
-                if (this.recentPresses.length === 0) {
-                    this.liveDisplay.innerHTML = 'Waiting for key presses...';
-                    return;
-                }
+                    const html = this.recentPresses.map(press => {
+                        const className = press.isChatter ? 'chatter' : 'normal';
+                        const icon = press.isChatter ? '⚠️' : '✓';
+                        const intervalText = press.interval !== null ? ` (+${press.interval}ms)` : '';
+                        const intervalClass = press.interval !== null && press.interval < 100 ? 'fast-interval' : '';
 
-                const html = this.recentPresses.map(press => {
-                    const className = press.isChatter ? 'chatter' : 'normal';
-                    const icon = press.isChatter ? '⚠️' : '✓';
-                    const intervalText = press.interval !== null ? ` (+${press.interval}ms)` : '';
-                    const intervalClass = press.interval !== null && press.interval < 100 ? 'fast-interval' : '';
-                    
-                    return `<div class="key-press ${className}">
+                        return `<div class="key-press ${className}">
                         ${icon} ${press.time} - <span class="keycap">${press.key}</span><span class="${intervalClass}">${intervalText}</span>
                     </div>`;
-                }).join('');
+                    }).join('');
 
-                this.liveDisplay.innerHTML = html;
-            }
+                    this.liveDisplay.innerHTML = html;
+                }
 
-            displayChatterEvent(event) {
-                const time = new Date(event.detectedAt).toLocaleTimeString('en-US', {
-                    hour12: false,
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    second: '2-digit',
-                    fractionalSecondDigits: 3
-                });
-                const displayKey = event.key === ' ' ? 'SPACE' : event.key.toUpperCase();
-                const avgInterval = Math.round(event.avgInterval);
-                
-                const chatterItem = document.createElement('div');
-                chatterItem.className = `chatter-item ${event.severity}`;
-                chatterItem.innerHTML = `
+                displayChatterEvent(event) {
+                    const time = new Date(event.detectedAt).toLocaleTimeString('en-US', {
+                        hour12: false,
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        second: '2-digit',
+                        fractionalSecondDigits: 3
+                    });
+                    const displayKey = event.key === ' ' ? 'SPACE' : event.key.toUpperCase();
+                    const avgInterval = Math.round(event.avgInterval);
+
+                    const chatterItem = document.createElement('div');
+                    chatterItem.className = `chatter-item ${event.severity}`;
+                    chatterItem.innerHTML = `
                     <strong>${time}</strong> - Key <span class="keycap">${displayKey}</span> 
                     (${event.timestamps.length} rapid presses, avg ${avgInterval}ms interval)
                     <br><small>Intervals: ${event.intervals.map(i => i + 'ms').join(', ')}</small>
                 `;
 
-                if (this.chatterList.children.length === 1 && this.chatterList.children[0].style.textAlign) {
-                    this.chatterList.innerHTML = '';
+                    if (this.chatterList.children.length === 1 && this.chatterList.children[0].style.textAlign) {
+                        this.chatterList.innerHTML = '';
+                    }
+
+                    this.chatterList.insertBefore(chatterItem, this.chatterList.firstChild);
                 }
 
-                this.chatterList.insertBefore(chatterItem, this.chatterList.firstChild);
-            }
+                updateStatistics() {
+                    this.totalPressesEl.textContent = this.totalPresses;
+                    this.chatterEventsEl.textContent = this.chatterEvents.length;
+                    this.uniqueKeysEl.textContent = this.keyTimestamps.size;
 
-            updateStatistics() {
-                this.totalPressesEl.textContent = this.totalPresses;
-                this.chatterEventsEl.textContent = this.chatterEvents.length;
-                this.uniqueKeysEl.textContent = this.keyTimestamps.size;
-                
-                const chatterRate = this.totalPresses > 0 ? 
-                    Math.round((this.chatterEvents.length / this.totalPresses) * 100) : 0;
-                this.chatterRateEl.textContent = chatterRate + '%';
-            }
+                    const chatterRate = this.totalPresses > 0 ?
+                        Math.round((this.chatterEvents.length / this.totalPresses) * 100) : 0;
+                    this.chatterRateEl.textContent = chatterRate + '%';
+                }
 
-            clearData() {
-                this.keyTimestamps.clear();
-                this.chatterEvents = [];
-                this.totalPresses = 0;
-                this.recentPresses = [];
-                
-                this.liveDisplay.innerHTML = this.isMonitoring ? 
-                    'Monitoring active - Press any keys...' : 
-                    'Waiting for key presses...';
-                
-                this.chatterList.innerHTML = `
+                clearData() {
+                    this.keyTimestamps.clear();
+                    this.chatterEvents = [];
+                    this.totalPresses = 0;
+                    this.recentPresses = [];
+
+                    this.liveDisplay.innerHTML = this.isMonitoring ?
+                        'Monitoring active - Press any keys...' :
+                        'Waiting for key presses...';
+
+                    this.chatterList.innerHTML = `
                     <div style="padding: 20px; text-align: center; color: #666;">
                         No chatter events detected yet
                     </div>
                 `;
-                
-                this.updateStatistics();
-            }
-        }
 
-        // Initialize the monitor when the page loads
-        document.addEventListener('DOMContentLoaded', () => {
-            new KeyChatterMonitor();
-        });
-    </script>
-    
+                    this.updateStatistics();
+                }
+            }
+
+            // Initialize the monitor when the page loads
+            document.addEventListener('DOMContentLoaded', () => {
+                new KeyChatterMonitor();
+            });
+        </script>
+
         <footer class="footer">
             <div class="footer-text">
-                This app was vibe coded on June 22, 2025 by 
+                This app was <i>vibe coded</i> by
                 <a href="https://github.com/kamaln7" target="_blank" class="footer-link">
                     <img src="https://kamal.io/favicon-32x32.png" alt="Kamal" class="footer-icon">
                     Kamal
-                </a>, 
+                </a>,
                 <a href="https://github.com/jonfriesen" target="_blank" class="footer-link">
                     <img src="https://jonfriesen.ca/favicon.ico" alt="Jon" class="footer-icon">
                     Jon
-                </a>, and 
+                </a>, and
                 <a href="https://github.com/boldsoftware/sketch" target="_blank" class="footer-link">
                     <img src="https://sketch.dev/favicon.ico" alt="Sketch" class="footer-icon">
                     Sketch
@@ -911,4 +916,5 @@
         </footer>
     </div>
 </body>
+
 </html>
