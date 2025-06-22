@@ -21,6 +21,10 @@
             overflow-x: hidden;
         }
 
+        html {
+            background: #f5f5f5;
+        }
+
         /* Decorative background elements */
         body::before {
             content: '';
@@ -673,7 +677,13 @@
             }
 
             updateLiveDisplay(key, timestamp, isChatter) {
-                const time = new Date(timestamp).toLocaleTimeString();
+                const time = new Date(timestamp).toLocaleTimeString('en-US', {
+                    hour12: false,
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit',
+                    fractionalSecondDigits: 3
+                });
                 const displayKey = key === ' ' ? 'SPACE' : key.toUpperCase();
                 
                 // Calculate interval from previous press of the same key
@@ -713,7 +723,7 @@
                     const intervalClass = press.interval !== null && press.interval < 100 ? 'fast-interval' : '';
                     
                     return `<div class="key-press ${className}">
-                        ${icon} ${press.time} - ${press.key}<span class="${intervalClass}">${intervalText}</span>
+                        ${icon} ${press.time} - <strong>${press.key}</strong><span class="${intervalClass}">${intervalText}</span>
                     </div>`;
                 }).join('');
 
@@ -721,14 +731,20 @@
             }
 
             displayChatterEvent(event) {
-                const time = new Date(event.detectedAt).toLocaleTimeString();
+                const time = new Date(event.detectedAt).toLocaleTimeString('en-US', {
+                    hour12: false,
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit',
+                    fractionalSecondDigits: 3
+                });
                 const displayKey = event.key === ' ' ? 'SPACE' : event.key.toUpperCase();
                 const avgInterval = Math.round(event.avgInterval);
                 
                 const chatterItem = document.createElement('div');
                 chatterItem.className = `chatter-item ${event.severity}`;
                 chatterItem.innerHTML = `
-                    <strong>${time}</strong> - Key "${displayKey}" 
+                    <strong>${time}</strong> - Key "<strong>${displayKey}</strong>" 
                     (${event.timestamps.length} rapid presses, avg ${avgInterval}ms interval)
                     <br><small>Intervals: ${event.intervals.map(i => i + 'ms').join(', ')}</small>
                 `;
