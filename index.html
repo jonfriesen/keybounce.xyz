@@ -38,7 +38,7 @@
             background: #C2185B;
             border-radius: 50%;
             border: 6px solid #000;
-            z-index: 0;
+            z-index: -10;
             transform: rotate(15deg);
             box-shadow: 8px 8px 0 rgba(0, 0, 0, 0.3);
         }
@@ -52,7 +52,7 @@
             height: 80px;
             background: #ffd700;
             border: 4px solid #000;
-            z-index: 0;
+            z-index: -10;
             transform: rotate(-25deg);
             box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.3);
         }
@@ -61,7 +61,7 @@
             position: fixed;
             background: #C2185B;
             border: 4px solid #000;
-            z-index: 0;
+            z-index: -10;
             box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.3);
         }
 
@@ -162,7 +162,6 @@
             padding: 30px;
             border: 4px solid #000;
             position: relative;
-            z-index: 2;
         }
 
         .controls::before {
@@ -254,7 +253,6 @@
             text-transform: uppercase;
             letter-spacing: 1px;
             position: relative;
-            z-index: 2;
         }
 
         .status.monitoring {
@@ -316,7 +314,6 @@
             border: 4px solid #000;
             padding: 30px;
             position: relative;
-            z-index: 2;
         }
 
         .panel:nth-child(1)::before {
@@ -516,7 +513,6 @@
             margin-bottom: 30px;
             border: 4px solid #000;
             position: relative;
-            z-index: 2;
         }
 
         .instructions::before {
@@ -550,7 +546,6 @@
             border: 4px solid #000;
             padding: 30px;
             position: relative;
-            z-index: 2;
         }
 
         .bottom-panel::before {
@@ -572,7 +567,6 @@
             text-align: center;
             position: relative;
             font-family: 'Inter', sans-serif;
-            z-index: 2;
         }
 
         .footer::before {
