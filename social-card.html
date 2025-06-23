@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Key Bounce Monitor - Social Card</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            padding: 20px;
+        }
+
+        .social-card {
+            width: 1200px;
+            height: 630px;
+            background: white;
+            border: 4px solid black;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 60px;
+        }
+
+        .main-title {
+            font-size: 78px;
+            font-weight: 900;
+            color: black;
+            text-align: center;
+            line-height: 0.85;
+            margin-bottom: 35px;
+            letter-spacing: -3px;
+            text-transform: uppercase;
+            z-index: 10;
+            position: relative;
+            text-shadow: 3px 3px 0px white, 6px 6px 0px black;
+        }
+
+        .subtitle {
+            font-size: 32px;
+            font-weight: 900;
+            color: black;
+            text-align: center;
+            line-height: 1.1;
+            max-width: 850px;
+            z-index: 10;
+            position: relative;
+            text-transform: uppercase;
+            letter-spacing: -1px;
+        }
+
+        .shape-1 {
+            position: absolute;
+            width: 180px;
+            height: 180px;
+            background: #e91e63;
+            border: 4px solid black;
+            top: 80px;
+            left: 100px;
+            transform: rotate(-12deg);
+            z-index: 1;
+            box-shadow: 6px 6px 0px black;
+        }
+
+        .shape-2 {
+            position: absolute;
+            width: 120px;
+            height: 200px;
+            background: #ff5722;
+            border: 4px solid black;
+            bottom: 100px;
+            right: 120px;
+            transform: rotate(8deg);
+            z-index: 1;
+            box-shadow: 5px 5px 0px black;
+        }
+
+        .shape-3 {
+            position: absolute;
+            width: 140px;
+            height: 140px;
+            background: #ffeb3b;
+            border: 4px solid black;
+            border-radius: 50%;
+            top: 120px;
+            right: 200px;
+            transform: rotate(15deg);
+            z-index: 1;
+            box-shadow: 4px 4px 0px black;
+        }
+
+        .accent-line-1 {
+            position: absolute;
+            width: 300px;
+            height: 8px;
+            background: #e91e63;
+            border: 2px solid black;
+            top: 50px;
+            right: 50px;
+            transform: rotate(-5deg);
+            z-index: 1;
+        }
+
+        .accent-line-2 {
+            position: absolute;
+            width: 200px;
+            height: 8px;
+            background: #ff5722;
+            border: 2px solid black;
+            bottom: 50px;
+            left: 80px;
+            transform: rotate(12deg);
+            z-index: 1;
+        }
+
+        /* Debug border to show exact dimensions */
+        .dimension-helper {
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            border: 2px dashed #666;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="social-card">
+        <div class="dimension-helper"></div>
+        
+        <!-- Geometric shapes -->
+        <div class="shape-1"></div>
+        <div class="shape-2"></div>
+        <div class="shape-3"></div>
+        <div class="accent-line-1"></div>
+        <div class="accent-line-2"></div>
+        
+        <!-- Content -->
+        <h1 class="main-title">KEY BOUNCE<br>MONITOR</h1>
+        <p class="subtitle">Detect keyboard bounce and chatter issues with brutal precision</p>
+    </div>
+</body>
+</html>
