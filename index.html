@@ -270,48 +270,18 @@
             animation: none;
         }
 
-        .status {
-            text-align: center;
+        .stats-panel {
             margin-bottom: 40px;
-            padding: 20px;
-            font-weight: 700;
-            font-size: 1.2rem;
-            border: 4px solid #000;
-            background: #fff;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            position: relative;
         }
 
-        .status.monitoring {
+        .stats-panel::before {
+            content: '';
+            position: absolute;
+            top: -8px;
+            left: -8px;
+            right: 8px;
+            bottom: 8px;
             background: #2E7D32;
-            color: #fff;
-        }
-
-        .status.monitoring::before {
-            content: '';
-            position: absolute;
-            top: -8px;
-            left: -8px;
-            right: 8px;
-            bottom: 8px;
-            background: #C2185B;
-            z-index: -1;
-        }
-
-        .status.stopped {
-            background: #C62828;
-            color: #fff;
-        }
-
-        .status.stopped::before {
-            content: '';
-            position: absolute;
-            top: -8px;
-            left: -8px;
-            right: 8px;
-            bottom: 8px;
-            background: #ccc;
             z-index: -1;
         }
 
@@ -569,23 +539,7 @@
             font-weight: 500;
         }
 
-        .bottom-panel {
-            background: #fff;
-            border: 4px solid #000;
-            padding: 30px;
-            position: relative;
-        }
 
-        .bottom-panel::before {
-            content: '';
-            position: absolute;
-            top: -8px;
-            left: -8px;
-            right: 8px;
-            bottom: 8px;
-            background: #2E7D32;
-            z-index: -1;
-        }
 
         .footer {
             background: #fff;
@@ -683,46 +637,44 @@
             <button id="clearBtn">Clear Data</button>
         </div>
 
-        <div class="status stopped" id="status">
-            Ready to monitor - Click "Start Monitoring" to begin
-        </div>
-
-        <div class="grid">
-            <div class="panel">
-                <h3>📊 LIVE STATISTICS</h3>
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-value" id="totalPresses">0</div>
-                        <div class="stat-label">Total Presses</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-value" id="chatterEvents">0</div>
-                        <div class="stat-label">Chatter Events</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-value" id="uniqueKeys">0</div>
-                        <div class="stat-label">Unique Keys</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-value" id="chatterRate">0%</div>
-                        <div class="stat-label">Chatter Rate</div>
-                    </div>
+        <!-- Live Statistics Panel - Now horizontal where status bar was -->
+        <div class="panel stats-panel">
+            <h3>📊 LIVE STATISTICS</h3>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value" id="totalPresses">0</div>
+                    <div class="stat-label">Total Presses</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="chatterEvents">0</div>
+                    <div class="stat-label">Chatter Events</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="uniqueKeys">0</div>
+                    <div class="stat-label">Unique Keys</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="chatterRate">0%</div>
+                    <div class="stat-label">Chatter Rate</div>
                 </div>
             </div>
+        </div>
 
+        <!-- Grid with Recent Key Presses on left and Chatter Events on right -->
+        <div class="grid">
             <div class="panel">
                 <h3>🔥 RECENT KEY PRESSES</h3>
                 <div class="live-display" id="liveDisplay">
                     Waiting for key presses...
                 </div>
             </div>
-        </div>
 
-        <div class="panel bottom-panel">
-            <h3>⚠️ DETECTED CHATTER EVENTS</h3>
-            <div class="chatter-list" id="chatterList">
-                <div style="padding: 20px; text-align: center; color: #666;">
-                    No chatter events detected yet
+            <div class="panel">
+                <h3>⚠️ DETECTED CHATTER EVENTS</h3>
+                <div class="chatter-list" id="chatterList">
+                    <div style="padding: 20px; text-align: center; color: #666;">
+                        No chatter events detected yet
+                    </div>
                 </div>
             </div>
         </div>
@@ -744,7 +696,6 @@
                 initializeElements() {
                     this.toggleBtn = document.getElementById('toggleBtn');
                     this.clearBtn = document.getElementById('clearBtn');
-                    this.status = document.getElementById('status');
                     this.thresholdInput = document.getElementById('threshold');
                     this.sensitivityInput = document.getElementById('sensitivity');
                     this.liveDisplay = document.getElementById('liveDisplay');
@@ -778,16 +729,12 @@
                 startMonitoring() {
                     this.toggleBtn.textContent = 'Stop Monitoring';
                     this.toggleBtn.classList.add('monitoring');
-                    this.status.textContent = 'Monitoring active - Start typing to detect key chatter';
-                    this.status.className = 'status monitoring';
                     this.liveDisplay.innerHTML = 'Monitoring started - Press any keys...';
                 }
 
                 stopMonitoring() {
                     this.toggleBtn.textContent = 'Start Monitoring';
                     this.toggleBtn.classList.remove('monitoring');
-                    this.status.textContent = 'Monitoring stopped';
-                    this.status.className = 'status stopped';
                 }
 
                 handleKeyPress(event) {
