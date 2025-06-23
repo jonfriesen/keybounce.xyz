@@ -234,6 +234,42 @@
             box-shadow: 2px 2px 0 #ffd700;
         }
 
+        /* Neobrutalist animation for Start Monitoring button */
+        button#toggleBtn:not(.monitoring) {
+            animation: brutalBounce 1.5s linear infinite;
+        }
+
+        @keyframes brutalBounce {
+            0%, 100% {
+                transform: translate(0, 0);
+                box-shadow: 4px 4px 0 #000;
+            }
+            25% {
+                transform: translate(-3px, -3px);
+                box-shadow: 8px 8px 0 #C2185B;
+            }
+            50% {
+                transform: translate(2px, 2px);
+                box-shadow: 2px 2px 0 #ffd700;
+            }
+            75% {
+                transform: translate(-1px, -1px);
+                box-shadow: 6px 6px 0 #2E7D32;
+            }
+        }
+
+        /* Override hover effect when animating */
+        button#toggleBtn:not(.monitoring):hover {
+            animation: none !important;
+            transform: translate(-2px, -2px) !important;
+            box-shadow: 6px 6px 0 #C2185B !important;
+        }
+
+        /* Stop animation when monitoring is active */
+        button#toggleBtn.monitoring {
+            animation: none;
+        }
+
         .status {
             text-align: center;
             margin-bottom: 40px;
@@ -741,6 +777,7 @@
 
                 startMonitoring() {
                     this.toggleBtn.textContent = 'Stop Monitoring';
+                    this.toggleBtn.classList.add('monitoring');
                     this.status.textContent = 'Monitoring active - Start typing to detect key chatter';
                     this.status.className = 'status monitoring';
                     this.liveDisplay.innerHTML = 'Monitoring started - Press any keys...';
@@ -748,6 +785,7 @@
 
                 stopMonitoring() {
                     this.toggleBtn.textContent = 'Start Monitoring';
+                    this.toggleBtn.classList.remove('monitoring');
                     this.status.textContent = 'Monitoring stopped';
                     this.status.className = 'status stopped';
                 }
